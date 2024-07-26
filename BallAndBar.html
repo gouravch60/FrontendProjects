@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BallstickGame</title>
+    <style>
+        #game
+        {
+            height: 620px;
+            width: 900px;
+            background-color: gray;
+            margin: auto;
+        }
+        #ball
+        {
+            height: 50px;
+            width: 50px;
+            background-color: blue;
+            border-radius: 100%;
+            transition-duration:0.02s ;
+            transform: translate(100px,50px);
+            border: 3px solid black;
+
+        }
+        #bar
+        {
+            width: 200px;
+            height: 25px;
+            background-color: red;
+            position: relative;
+            transition-duration: 0.02s;
+            transform: translate(350px,0px);
+            border-radius: 10px;
+            border: 2px solid black;
+
+        }
+        #playground
+        {
+            height: 500px;
+
+        }
+        button
+        {
+            background-color: forestgreen;
+            height: 50px;
+            width: 200px;
+            border: 5px solid blue;
+            border-radius: 10px;
+            margin-top:0px ;
+            color: white;
+            font-size: 20px;
+            font-family: "Cooper Black";
+            padding-bottom: 3px;
+        }
+        .block
+        {
+            height: 30px;
+            width: 170px;
+            background-color: orangered;
+            display: block;
+            float: left;
+            border:5px solid black;
+            border-radius: 10px;
+
+        }
+        #score
+        {
+            height: 150px;
+            width: 200px;
+            background-color: transparent;
+            font-family: "Comic Sans MS";
+            font-size: 30px;
+            transform: translate(350px,250px);
+            position: absolute;
+            color: whitesmoke;
+            text-align: center;
+        }
+    </style>
+</head>
+<body><div id="game">
+    <div id="score"></div>
+    <div class="block" id="block1"></div><div class="block" id="block2"></div><div class="block" id="block3"></div><div class="block" id="block4"></div><div class="block" id="block5"></div>
+
+    <div id="playground">
+
+        <div id="ball"></div>
+    </div>
+    <div id="base">
+        <div id="bar"></div>
+        <br><br>
+        <center>
+            <button onclick="left()">Left</button><button onclick="stopf()" style="margin-left: 50px">Stop</button><button onclick="right()" style="margin-left: 50px">Right</button>
+        </center>
+
+
+    </div>
+</div>
+<h1 id="display"></h1>
+</body>
+<script>
+    var barX=350,ballX=100,ballY=50,rand=0,score=0;
+    var moveright=true,movedown=true,gameover=false,b1=true,b2=true,b3=true,b4=true,b5=true;
+    var lefttimer,righttimer;
+    function stopf() {
+        clearInterval(lefttimer);
+        clearInterval(righttimer);
+    }
+    function left() {
+        clearInterval(righttimer);
+        lefttimer=setInterval(function () {
+            if(barX>=0&&barX<=700&&!gameover) {
+                if (barX > 0)
+                    barX -= 5;
+                document.getElementById('bar').setAttribute('style', 'transform:translate(' + barX + 'px,0px)');
+            }
+        },20);
+    }
+    function right() {
+        clearInterval(lefttimer);
+        righttimer=setInterval(function () {
+            if(barX>=0&&barX<=700&&!gameover) {
+                if (barX <700)
+                    barX += 5;
+                document.getElementById('bar').setAttribute('style', 'transform:translate(' + barX + 'px,0px)');
+            }
+        },20);
+    }
+
+    var myvar=setInterval(function () {
+        if(ballX>=0&&ballX<=180&&ballY<=30&&b1) {
+            movedown = true;
+            document.getElementById('block1').setAttribute('style','visibility:hidden;');
+            b1=false;
+            score+=5;
+        }
+        if(ballX>=181&&ballX<=360&&ballY<=30&&b2) {
+            movedown = true;
+            document.getElementById('block2').setAttribute('style','visibility:hidden;');
+            b2=false;
+            score+=5;
+        }
+        if(ballX>=361&&ballX<=540&&ballY<=30&&b3) {
+            movedown = true;
+            document.getElementById('block3').setAttribute('style','visibility:hidden;');
+            b3=false;
+            score+=5;
+        }
+        if(ballX>=541&&ballX<=720&&ballY<=30&&b4) {
+            movedown = true;
+            document.getElementById('block4').setAttribute('style','visibility:hidden;');
+            b4=false;
+            score+=5;
+        }
+        if(ballX>=721&&ballX<=900&&ballY<=30&&b5) {
+            movedown = true;
+            document.getElementById('block5').setAttribute('style','visibility:hidden;');
+            b5=false;
+            score+=5;
+        }
+        document.getElementById('score').innerHTML="Score:"+score;
+        if(ballX<=0)
+        {
+            moveright=true;
+
+        }
+        else if(ballX>=850)
+        {
+            moveright=false;
+        }
+        if(moveright)
+            ballX+=5;
+        else
+            ballX-=5;
+
+        if(ballY<=0)
+        {
+            movedown=true;
+
+        }
+        else if(ballY==450&&ballY<=550)
+        {
+            if(ballX>=(barX-25)&&(ballX+25)<=(barX+200))
+            {
+                movedown=false;
+            }
+
+        }
+        else if(ballY>=500)
+        {
+            gameover=true;
+
+        }
+        if(gameover){
+            navigator.vibrate(200);
+            setTimeout(function () {
+                alert('GAMEOVER!!\nYour Score is:'+score+'\nRefresh the page to start again','close',false);
+            },1000);
+            clearInterval(myvar);
+        }
+        else
+        {
+            if(movedown)
+                ballY+=5;
+            else
+                ballY-=5;
+            document.getElementById('ball').setAttribute('style','transform:translate('+(ballX+rand)+'px,'+ballY+'px)');
+
+        }
+        if(!b1&&!b2&&!b3&&!b4&&!b5)
+        {
+            alert('Congrats! YOU WON!!\nYour Score is perfect:'+score+'\nRefresh the page to start again','close',false);
+            clearInterval(lefttimer);
+            clearInterval(righttimer);
+            clearInterval(myvar);
+        }
+
+    },20);
+</script>
+
+</html>
